@@ -1,0 +1,354 @@
+/* =========================================
+   1. VARIABLES & CONFIGURACIÓN BASE
+   ========================================= */
+:root {
+    --neon-blue: #05d9e8;
+    --neon-purple: #bd00ff;
+    --neon-pink: #ff2a6d;
+    --neon-yellow: #fcee0a;
+    --dark-bg: #0a0a12;
+    --card-bg: rgba(30, 30, 40, 0.8);
+    --text-light: #e1e1ff;
+}
+
+body {
+    background-image:
+            linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+            url('../images/background.png');
+    background-repeat: repeat;
+    background-size: 400px auto;
+    background-color: var(--dark-bg);
+    color: var(--text-light);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Tipografía General */
+h1, h2, h3, h4, h5 {
+    text-shadow: 0 0 10px rgba(255, 42, 109, 0.5);
+}
+
+.text-muted {
+    color: #a0a0b0 !important;
+}
+
+.text-warning {
+    color: var(--neon-pink) !important;
+}
+
+/* =========================================
+   2. NAVBAR & NAVEGACIÓN PRINCIPAL
+   ========================================= */
+.navbar-dark.bg-dark {
+    background-color: rgba(10, 10, 18, 0.95) !important;
+    border-bottom: 2px solid var(--neon-purple);
+    box-shadow: 0 0 15px var(--neon-purple);
+}
+
+.navbar-brand {
+    font-weight: bold;
+    color: var(--neon-blue) !important;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* --- ENLACES DEL MENÚ (CORREGIDO: Sin doble subrayado) --- */
+.nav-link-main {
+    text-decoration: none !important; /* IMPORTANTE: Quita la línea gris del navegador */
+    color: #ffffff !important;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.95rem;
+    padding-bottom: 5px;
+    margin: 0 10px;
+
+    /* Estrategia de subrayado único: Borde inferior */
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.nav-link-main:hover {
+    color: var(--neon-yellow) !important;
+    border-bottom-color: var(--neon-yellow); /* Aquí aparece la línea */
+    text-shadow: 0 0 12px var(--neon-yellow);
+    transform: translateY(-2px);
+}
+
+/* =========================================
+   3. BARRA LATERAL (OFFCANVAS)
+   ========================================= */
+.neon-sidebar {
+    background-color: rgba(10, 10, 18, 0.70) !important;
+    backdrop-filter: blur(10px);
+    width: 300px !important;
+    border-left: 3px solid var(--neon-purple);
+    box-shadow: -10px 0 30px rgba(189, 0, 255, 0.2);
+}
+
+.neon-toggler {
+    color: var(--text-light) !important;
+    transition: transform 0.3s ease;
+}
+
+.neon-toggler:hover {
+    color: var(--neon-blue) !important;
+    transform: scale(1.1);
+}
+
+.neon-menu-item {
+    border: 1px solid #333;
+    background-color: rgba(255, 255, 255, 0.05);
+    transition: all 0.3s ease;
+}
+
+.neon-menu-item:hover {
+    background-color: rgba(189, 0, 255, 0.2);
+    border-color: var(--neon-purple);
+    box-shadow: 0 0 15px var(--neon-purple);
+    transform: translateX(5px);
+    color: white !important;
+}
+
+.btn-close-white {
+    opacity: 0.8;
+}
+
+/* =========================================
+   4. COMPONENTES: TARJETAS & FORMS
+   ========================================= */
+.card {
+    background-color: rgba(30, 30, 40, 0.95);
+    border: 1px solid var(--neon-purple);
+    color: var(--text-light);
+    backdrop-filter: blur(5px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 20px var(--neon-blue), inset 0 0 10px var(--neon-purple);
+    border-color: var(--neon-blue);
+}
+
+.card-title {
+    color: var(--neon-pink);
+    font-weight: bold;
+}
+
+.form-control {
+    background-color: rgba(10, 10, 18, 0.8) !important;
+    border: 1px solid var(--neon-purple);
+    color: var(--text-light) !important;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+}
+
+.form-control:focus {
+    background-color: rgba(10, 10, 18, 0.9) !important;
+    border-color: var(--neon-blue);
+    box-shadow: 0 0 15px var(--neon-blue);
+}
+
+.form-control::placeholder {
+    color: #6c757d;
+    font-style: italic;
+}
+
+/* =========================================
+   5. SECCIÓN HERO (PORTADA)
+   ========================================= */
+.hero-background {
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    padding: 80px 0;
+    overflow: hidden;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(10, 10, 18, 0.85);
+    backdrop-filter: blur(5px);
+    z-index: 1;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+/* =========================================
+   6. BOTONES PERSONALIZADOS
+   ========================================= */
+
+/* Botón Primario (Bootstrap modificado) */
+.btn-primary {
+    background-color: transparent;
+    border: 2px solid var(--neon-blue);
+    color: var(--neon-blue);
+    box-shadow: 0 0 5px var(--neon-blue);
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: var(--neon-blue);
+    color: var(--dark-bg);
+    box-shadow: 0 0 20px var(--neon-blue);
+    border-color: var(--neon-blue);
+}
+
+/* Botón Secundario / Cancelar */
+.btn-outline-secondary {
+    color: var(--neon-purple);
+    border-color: var(--neon-purple);
+}
+.btn-outline-secondary:hover {
+    background-color: var(--neon-purple);
+    box-shadow: 0 0 15px var(--neon-purple);
+    color: white;
+}
+
+/* Botón Amarillo Neón (Añadir Favoritos) */
+.btn-neon-yellow-outline {
+    background-color: transparent;
+    color: var(--neon-yellow);
+    border: 3px solid var(--neon-yellow);
+    box-shadow: inset 0 0 10px rgba(252, 238, 10, 0.2), 0 0 15px rgba(252, 238, 10, 0.4);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease-in-out;
+}
+
+.btn-neon-yellow-outline:hover {
+    background-color: var(--neon-yellow);
+    color: black;
+    box-shadow: 0 0 30px var(--neon-yellow), 0 0 50px var(--neon-yellow);
+    transform: translateY(-3px);
+}
+
+/* Botón Azul Neón (Escribir Reseña) */
+.btn-neon-blue-outline {
+    background-color: transparent;
+    color: var(--neon-blue);
+    border: 3px solid var(--neon-blue);
+    box-shadow: inset 0 0 10px rgba(5, 217, 232, 0.2), 0 0 15px rgba(5, 217, 232, 0.4);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease-in-out;
+}
+
+.btn-neon-blue-outline:hover {
+    background-color: var(--neon-blue);
+    color: black;
+    box-shadow: 0 0 30px var(--neon-blue), 0 0 50px var(--neon-blue);
+    transform: translateY(-3px);
+}
+
+/* Botón Morado Sólido */
+.btn-neon-purple-solid {
+    background-color: var(--neon-purple);
+    color: white;
+    border: none;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 0 15px rgba(189, 0, 255, 0.4);
+    transition: all 0.3s ease;
+}
+
+.btn-neon-purple-solid:hover {
+    background-color: #d500f9;
+    box-shadow: 0 0 25px var(--neon-purple);
+    transform: translateX(5px);
+}
+
+/* Botón Morado Ghost (Menú Lateral) */
+.btn-neon-purple-ghost {
+    background-color: transparent;
+    color: var(--neon-purple);
+    border: 2px solid var(--neon-purple);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: inset 0 0 10px rgba(189, 0, 255, 0.1);
+    transition: all 0.3s ease-in-out;
+}
+
+.btn-neon-purple-ghost:hover {
+    background-color: var(--neon-purple);
+    color: white;
+    box-shadow: 0 0 20px var(--neon-purple), 0 0 40px var(--neon-purple);
+    transform: translateY(-3px);
+}
+
+/* Botón Rojo Ghost (Logout / Admin) */
+.btn-neon-red-ghost {
+    background-color: transparent;
+    color: var(--neon-pink);
+    border: 2px solid var(--neon-pink);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: inset 0 0 10px rgba(255, 42, 109, 0.1);
+    transition: all 0.3s ease-in-out;
+}
+
+.btn-neon-red-ghost:hover {
+    background-color: var(--neon-pink);
+    color: white;
+    border-color: var(--neon-pink);
+    box-shadow: 0 0 20px var(--neon-pink), 0 0 40px var(--neon-pink);
+    transform: translateY(-3px);
+}
+
+/* Botón Verde Ghost (Volver) */
+.btn-neon-green-ghost {
+    background-color: transparent;
+    color: #39ff14;
+    border: 2px solid #39ff14;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: inset 0 0 10px rgba(57, 255, 20, 0.1);
+    transition: all 0.3s ease-in-out;
+}
+
+.btn-neon-green-ghost:hover {
+    background-color: #39ff14;
+    color: black;
+    box-shadow: 0 0 20px #39ff14, 0 0 40px #39ff14;
+    transform: translateY(-3px);
+}
+
+/* =========================================
+   7. FOOTER
+   ========================================= */
+footer {
+    background-color: rgba(10, 10, 18, 0.95) !important;
+    border-top: 2px solid var(--neon-purple);
+    box-shadow: 0 -4px 15px rgba(189, 0, 255, 0.2);
+}
+
+.footer-link {
+    transition: transform 0.3s ease, text-shadow 0.3s ease;
+    cursor: pointer;
+    padding: 10px 20px;
+    border-radius: 50px;
+    border: 1px solid transparent;
+}
+
+.footer-link:hover {
+    transform: translateY(-5px);
+    background-color: rgba(255, 255, 255, 0.05);
+    border-color: var(--neon-purple);
+    box-shadow: 0 0 15px var(--neon-purple);
+}
+
+.footer-link span {
+    font-family: 'Courier New', monospace;
+}

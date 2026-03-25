@@ -1,0 +1,8 @@
+com.borisbaldominos.proyectofinal
+com.borisbaldominos.proyectofinal.config
+com.borisbaldominos.proyectofinal.controller
+com.borisbaldominos.proyectofinal.controller.advice
+com.borisbaldominos.proyectofinal.dto
+com.borisbaldominos.proyectofinal.model
+com.borisbaldominos.proyectofinal.repository
+com.borisbaldominos.proyectofinal.service

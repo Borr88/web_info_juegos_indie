@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro - IndieDB</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+<nav class="navbar navbar-dark bg-dark fixed-top mb-4 p-0">
+    <div class="container-fluid position-relative px-4 py-3" style="background-color: rgba(10, 10, 18, 0.95); border-bottom: 2px solid var(--neon-purple); box-shadow: 0 4px 15px rgba(189, 0, 255, 0.2);">
+
+        <a class="navbar-brand fw-bold text-uppercase me-4" href="/" style="color: var(--neon-blue); letter-spacing: 2px;">
+            🎮 IndieLovers 🎮
+        </a>
+
+        <div class="d-none d-lg-flex align-items-center gap-4 me-auto ms-5">
+            <a th:href="@{/#inicio}" class="nav-link-main">Inicio</a>
+            <a th:href="@{/#novedades}" class="nav-link-main">Novedades</a>
+            <a th:href="@{/#populares}" class="nav-link-main">Populares</a>
+            <a th:href="@{/categorias}" class="nav-link-main">Categorías</a>
+            <a th:href="@{/#contacto}" class="nav-link-main">Contacto</a>
+        </div>
+
+
+        <div class="d-flex align-items-center gap-3">
+            <button class="navbar-toggler neon-toggler border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuLateral">
+                <span class="fs-3">☰</span>
+            </button>
+        </div>
+
+        <div class="offcanvas offcanvas-end neon-sidebar" tabindex="-1" id="menuLateral">
+            <div class="offcanvas-header border-bottom border-secondary">
+                <h5 class="offcanvas-title text-light">CUENTA</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+            </div>
+            <div class="offcanvas-body d-flex flex-column gap-3 p-4">
+                <span class="text-muted small text-uppercase mb-2">Acceso Usuarios</span>
+                <a href="/login" class="btn btn-outline-light d-flex justify-content-center align-items-center p-3 rounded-3 neon-menu-item">
+                    Iniciar Sesión
+                </a>
+                <a href="/registro" class="btn btn-outline-light d-flex justify-content-center align-items-center p-3 rounded-3 neon-menu-item">
+                    Crear Cuenta
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+<div style="height: 100px;"></div>
+
+<div class="container d-flex justify-content-center align-items-center flex-grow-1">
+    <div class="card p-4 shadow-lg neon-card" style="width: 100%; max-width: 400px; border: 1px solid var(--neon-blue);">
+        <div class="text-center mb-4">
+            <h2 class="text-center" style="color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue);">Crear Cuenta</h2>
+            <p class="text-muted">Únete a la resistencia</p>
+        </div>
+
+        <form th:action="@{/guardar-usuario}" th:object="${usuario}" method="post">
+            <div class="mb-3">
+                <label class="form-label text-light">Usuario</label>
+                <input type="text" th:field="*{nombre}" class="form-control bg-dark text-light border-secondary" placeholder="Ej: Neo" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label text-light">Email</label>
+                <input type="email" th:field="*{email}" class="form-control bg-dark text-light border-secondary" placeholder="matrix@zion.com" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label text-light">Contraseña</label>
+                <input type="password" th:field="*{password}" class="form-control bg-dark text-light border-secondary" placeholder="******" required>
+            </div>
+
+            <div class="d-grid gap-2 mt-4">
+                <button type="submit" class="btn btn-primary btn-lg" style="box-shadow: 0 0 15px var(--neon-blue);">Registrarse</button>
+            </div>
+
+            <div class="mt-3 text-center">
+                <a href="/login" class="text-decoration-none" style="color: var(--neon-yellow);">¿Ya tienes cuenta? Inicia Sesión</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<footer id="contacto" class="mt-auto text-light"
+        style="background-color: rgba(10, 10, 18, 0.95);
+               border-top: 2px solid var(--neon-purple);
+               box-shadow: 0 -4px 15px rgba(189, 0, 255, 0.2);
+               position: relative; z-index: 10;">
+
+    <div class="container py-3">
+        <div class="row align-items-center justify-content-center text-center">
+
+            <div class="col-12 d-flex flex-column flex-md-row justify-content-center align-items-center gap-4">
+
+                <span class="text-uppercase fw-bold me-md-3" style="color: var(--neon-blue); letter-spacing: 2px; font-size: 0.9rem;">
+                    📬 Contáctanos:
+                </span>
+
+                <div class="d-flex align-items-center gap-2 footer-link" title="Instagram">
+                    <img th:src="@{/images/instagram.png}" alt="Instagram"
+                         style="width: 45px; height: 45px; filter: drop-shadow(0 0 5px #C13584);">
+                    <span class="fw-bold text-light d-none d-lg-block">@indieLovers</span>
+                </div>
+
+                <div class="d-flex align-items-center gap-2 footer-link" title="X">
+                    <img th:src="@{/images/x.png}" alt="X"
+                         style="width: 40px; height: 40px; filter: drop-shadow(0 0 5px #ffffff);"> <span class="fw-bold text-light d-none d-lg-block">@indieLovers</span>
+                </div>
+
+                <div class="d-flex align-items-center gap-2 footer-link" title="Correo">
+                    <img th:src="@{/images/gmail.png}" alt="Gmail"
+                         style="width: 45px; height: 45px; filter: drop-shadow(0 0 5px #EA4335);">
+                    <span class="fw-bold text-light d-none d-lg-block">frameworksborisbg@gmail.com</span>
+                </div>
+
+            </div>
+
+            <div class="col-12 mt-3 text-muted" style="font-size: 0.75rem;">
+                &copy; 2026 IndieLovers. Todos los derechos reservados.
+            </div>
+
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>

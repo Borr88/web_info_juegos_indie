@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Indie Games DB</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+</head>
+<body class="bg-dark text-light d-flex flex-column min-vh-100">
+
+<nav class="navbar navbar-dark bg-dark fixed-top p-0">
+    <div class="container-fluid position-relative px-4 py-3" style="background-color: rgba(10, 10, 18, 0.95); border-bottom: 2px solid var(--neon-purple); box-shadow: 0 4px 15px rgba(189, 0, 255, 0.2);">
+
+        <a class="navbar-brand fw-bold text-uppercase me-4" href="#inicio" style="color: var(--neon-blue); letter-spacing: 2px;">
+            🎮 IndieLovers
+        </a>
+
+        <div class="d-none d-lg-flex align-items-center gap-4 me-auto ms-5">
+            <a th:href="@{/#inicio}" class="nav-link-main">Inicio</a>
+            <a th:href="@{/#novedades}" class="nav-link-main">Novedades</a>
+            <a th:href="@{/#populares}" class="nav-link-main">Populares</a>
+            <a th:href="@{/categorias}" class="nav-link-main">Categorías</a>
+            <a th:href="@{/#contacto}" class="nav-link-main">Contacto</a>
+        </div>
+
+        <div class="d-flex align-items-center gap-3">
+            <form th:action="@{/}" method="get" class="d-none d-md-flex">
+                <div class="input-group">
+                    <input type="text" name="keyword" class="form-control bg-dark text-light border-secondary" placeholder="Buscar..." th:value="${keyword}">
+                    <button type="submit" class="btn btn-outline-primary">🔍</button>
+                </div>
+            </form>
+
+            <div class="d-flex align-items-center gap-3">
+                <button sec:authorize="isAnonymous()" class="navbar-toggler navbar-dark neon-toggler border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuLateral">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div sec:authorize="isAuthenticated()" th:if="${usuarioGlobal != null}" class="dropdown">
+                    <img th:src="${usuarioGlobal.imagenUrl != null ? '/uploads/' + usuarioGlobal.imagenUrl : 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + usuarioGlobal.nombre}"
+                         class="rounded-circle border border-2 border-neon-purple"
+                         style="width: 45px; height: 45px; object-fit: cover; cursor: pointer;"
+                         data-bs-toggle="offcanvas" data-bs-target="#menuLateral">
+                </div>
+            </div>
+        </div>
+
+        <div class="offcanvas offcanvas-end neon-sidebar" tabindex="-1" id="menuLateral">
+            <div class="offcanvas-header border-bottom border-secondary">
+                <h5 sec:authorize="!isAuthenticated()" class="offcanvas-title text-light">MENÚ</h5>
+                <h5 sec:authorize="isAuthenticated()" class="offcanvas-title text-uppercase fw-bold" style="color: var(--neon-blue);">
+                    <span sec:authentication="name">NOMBRE</span>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+            </div>
+
+            <div class="offcanvas-body d-flex flex-column p-4">
+
+                <div sec:authorize="!isAuthenticated()" class="d-flex flex-column gap-3">
+                    <span class="text-muted small text-uppercase mb-2">Acceso Usuarios</span>
+                    <a href="/login" class="btn btn-outline-light d-flex justify-content-center align-items-center p-3 rounded-3 neon-menu-item">
+                        Iniciar Sesión
+                    </a>
+                    <a href="/registro" class="btn btn-outline-light d-flex justify-content-center align-items-center p-3 rounded-3 neon-menu-item">
+                        Crear Cuenta
+                    </a>
+                </div>
+
+                <div sec:authorize="isAuthenticated()" class="d-flex flex-column gap-3">
+                    <a href="/perfil" class="btn btn-neon-purple-ghost p-3 rounded-3 d-flex align-items-center gap-3">⚙️ Ajustes Perfil</a>
+                    <a href="/favoritos" class="btn btn-neon-purple-ghost p-3 rounded-3 d-flex align-items-center gap-3">❤️ Favoritos</a>
+                    <a href="/recomendaciones" class="btn btn-neon-purple-ghost p-3 rounded-3 d-flex align-items-center gap-3">✨ Recomendaciones</a>
+                    <a href="/notificaciones" class="btn btn-neon-purple-ghost p-3 rounded-3 d-flex align-items-center gap-3">🔔 Notificaciones</a>
+                    <a sec:authorize="hasAuthority('ADMIN')" href="/admin" class="btn btn-neon-red-ghost p-3 rounded-3 d-flex align-items-center gap-3 mt-2">👮‍♂️ PANEL ADMIN</a>
+                </div>
+
+                <div sec:authorize="isAuthenticated()" class="mt-auto pt-4">
+                    <a href="/logout" class="btn btn-neon-red-ghost d-flex justify-content-center align-items-center p-3 rounded-3 w-100">
+                        🚪 Cerrar Sesión
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div style="height: 80px;"></div>
+
+<section id="inicio" class="mb-5 position-relative">
+    <div id="bannerCarrusel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
+
+        <div class="carousel-indicators">
+            <button th:each="juego, stat : ${todosLosJuegos}"
+                    type="button"
+                    data-bs-target="#bannerCarrusel"
+                    th:data-bs-slide-to="${stat.index}"
+                    th:classappend="${stat.first} ? 'active'"
+                    aria-current="true"></button>
+        </div>
+
+        <div class="carousel-inner">
+            <div th:each="juego, stat : ${todosLosJuegos}"
+                 class="carousel-item"
+                 th:classappend="${stat.first} ? 'active'">
+
+                <div style="height: 60vh; position: relative; background-color: #000;">
+                    <img th:if="${juego.portadaUrl != null}"
+                         th:src="${juego.portadaUrl.startsWith('http') ? juego.portadaUrl : '/uploads/' + juego.portadaUrl}"
+                         class="d-block w-100 h-100"
+                         style="object-fit: cover; filter: brightness(0.4);"
+                         alt="Banner">
+
+                    <img th:unless="${juego.portadaUrl != null}"
+                         src="https://via.placeholder.com/1920x1080?text=IndieLovers"
+                         class="d-block w-100 h-100"
+                         style="object-fit: cover; filter: brightness(0.4);"
+                         alt="Banner Default">
+
+                    <div class="carousel-caption d-none d-md-block text-start mb-5 pb-5">
+                        <span class="badge bg-warning text-dark mb-2">🔥 Destacado</span>
+                        <h1 class="display-3 fw-bold text-uppercase" style="text-shadow: 0 0 20px var(--neon-blue);" th:text="${juego.titulo}">TITULO</h1>
+
+                        <p class="fs-4 text-light w-75 text-truncate" th:text="${juego.sinopsis != null} ? ${juego.sinopsis} : 'Sin descripción disponible.'">Sinopsis...</p>
+
+                        <a th:href="@{/videojuego/{id}(id=${juego.id})}" class="btn btn-lg btn-neon-blue-outline mt-3">Ver Ficha ➜</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button class="carousel-control-prev" type="button" data-bs-target="#bannerCarrusel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Anterior</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#bannerCarrusel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Siguiente</span>
+        </button>
+    </div>
+</section>
+
+<section id="novedades" class="container my-5 pt-5">
+    <div class="d-flex align-items-center mb-4 border-bottom border-secondary pb-2">
+        <h2 class="text-uppercase fw-bold" style="color: var(--neon-yellow); letter-spacing: 2px;">🚀 Próximos Lanzamientos</h2>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+        <div class="col" th:each="juego : ${novedades}">
+            <div class="card bg-dark text-light border-0 shadow-lg position-relative overflow-hidden"
+                 style="border: 1px solid var(--neon-yellow) !important; box-shadow: 0 0 15px rgba(255, 240, 31, 0.15);">
+
+                <span class="position-absolute top-0 end-0 bg-warning text-dark px-3 py-1 m-3 rounded fw-bold shadow">
+                    📅 PRÓXIMAMENTE
+                </span>
+
+                <div class="row g-0">
+                    <div class="col-md-5">
+                        <img th:if="${juego.portadaUrl != null}"
+                             th:src="${juego.portadaUrl.startsWith('http') ? juego.portadaUrl : '/uploads/' + juego.portadaUrl}"
+                             class="img-fluid h-100" style="object-fit: cover; min-height: 250px;" alt="...">
+                    </div>
+                    <div class="col-md-7">
+                        <div class="card-body d-flex flex-column h-100 justify-content-center p-4">
+                            <h3 class="card-title fw-bold text-uppercase" th:text="${juego.titulo}">Título</h3>
+                            <p class="card-text text-muted" th:text="${juego.sinopsis != null} ? ${juego.sinopsis} : ''">Desc...</p>
+                            <a th:href="@{/videojuego/{id}(id=${juego.id})}" class="btn btn-outline-warning w-100 mt-auto">Añadir a Lista de Deseos ⭐</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="populares" class="container my-5 pt-5">
+    <div class="d-flex align-items-center mb-4 border-bottom border-secondary pb-2">
+        <h2 class="text-uppercase fw-bold" style="color: var(--neon-pink); letter-spacing: 2px;">🏆 Los Favoritos de la Comunidad</h2>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        <div class="col" th:each="juego : ${populares}">
+            <div class="card h-100 bg-dark text-light border-0 shadow-sm"
+                 style="border: 1px solid var(--neon-purple) !important; transition: transform 0.3s;">
+
+                <img th:if="${juego.portadaUrl != null}"
+                     th:src="${juego.portadaUrl.startsWith('http') ? juego.portadaUrl : '/uploads/' + juego.portadaUrl}"
+                     class="card-img-top"
+                     alt="Portada"
+                     style="height: 250px; object-fit: cover;">
+
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title fw-bold text-uppercase" style="color: var(--neon-purple);" th:text="${juego.titulo}">Título</h5>
+
+                    <div class="mt-auto d-flex justify-content-between align-items-center">
+                        <span class="badge bg-success fs-6">⭐ <span th:text="${juego.valoracionMedia}">10</span>/10</span>
+                        <a th:href="@{/videojuego/{id}(id=${juego.id})}" class="btn btn-sm btn-outline-light">Ver Detalles</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<footer id="contacto" class="mt-auto text-light"
+        style="background-color: rgba(10, 10, 18, 0.95);
+               border-top: 2px solid var(--neon-purple);
+               box-shadow: 0 -4px 15px rgba(189, 0, 255, 0.2);
+               position: relative; z-index: 10;">
+
+    <div class="container py-3">
+        <div class="row align-items-center justify-content-center text-center">
+            <div class="col-12 d-flex flex-column flex-md-row justify-content-center align-items-center gap-4">
+                <span class="text-uppercase fw-bold me-md-3" style="color: var(--neon-blue); letter-spacing: 2px; font-size: 0.9rem;">
+                    📬 Contáctanos:
+                </span>
+                <div class="d-flex align-items-center gap-2 footer-link" title="Instagram">
+                    <img th:src="@{/images/instagram.png}" alt="Instagram" style="width: 45px; height: 45px; filter: drop-shadow(0 0 5px #C13584);">
+                    <span class="fw-bold text-light d-none d-lg-block">@indieLovers</span>
+                </div>
+                <div class="d-flex align-items-center gap-2 footer-link" title="X">
+                    <img th:src="@{/images/x.png}" alt="X" style="width: 40px; height: 40px; filter: drop-shadow(0 0 5px #ffffff);">
+                    <span class="fw-bold text-light d-none d-lg-block">@indieLovers</span>
+                </div>
+                <div class="d-flex align-items-center gap-2 footer-link" title="Correo">
+                    <img th:src="@{/images/gmail.png}" alt="Gmail" style="width: 45px; height: 45px; filter: drop-shadow(0 0 5px #EA4335);">
+                    <span class="fw-bold text-light d-none d-lg-block">frameworksborisbg@gmail.com</span>
+                </div>
+            </div>
+            <div class="col-12 mt-3 text-muted" style="font-size: 0.75rem;">
+                &copy; 2026 IndieLovers. Todos los derechos reservados.
+            </div>
+        </div>
+    </div>
+</footer>
+</body>
+</html>

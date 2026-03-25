@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Mi Perfil - IndieLovers</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+</head>
+<body class="bg-dark text-light d-flex flex-column min-vh-100">
+
+<nav class="navbar navbar-dark bg-dark fixed-top mb-4 p-0">
+    <div class="container-fluid px-4 py-3" style="background-color: rgba(10, 10, 18, 0.95); border-bottom: 2px solid var(--neon-purple);">
+        <a class="navbar-brand fw-bold text-uppercase" href="/" style="color: var(--neon-blue); letter-spacing: 2px;">
+            🎮 IndieLovers
+        </a>
+
+        <div class="d-none d-lg-flex align-items-center gap-4 me-auto ms-5">
+            <a th:href="@{/#inicio}" class="nav-link-main">Inicio</a>
+            <a th:href="@{/#novedades}" class="nav-link-main">Novedades</a>
+            <a th:href="@{/#populares}" class="nav-link-main">Populares</a>
+            <a th:href="@{/categorias}" class="nav-link-main">Categorías</a>
+            <a th:href="@{/#contacto}" class="nav-link-main">Contacto</a>
+        </div>
+
+        <div class="d-flex align-items-center gap-3">
+
+            <button sec:authorize="isAnonymous()"
+                    class="navbar-toggler navbar-dark neon-toggler border-0"
+                    type="button"
+                    data-bs-toggle="offcanvas" data-bs-target="#menuLateral">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div sec:authorize="isAuthenticated()" th:if="${usuarioGlobal != null}" class="dropdown">
+                <img th:src="${usuarioGlobal.imagenUrl != null ? '/uploads/' + usuarioGlobal.imagenUrl : 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + usuarioGlobal.nombre}"
+                     class="rounded-circle border border-2 border-neon-purple"
+                     style="width: 45px; height: 45px; object-fit: cover; cursor: pointer; box-shadow: 0 0 10px var(--neon-purple); transition: transform 0.2s;"
+                     onmouseover="this.style.transform='scale(1.1)'"
+                     onmouseout="this.style.transform='scale(1)'"
+                     alt="Menu Avatar"
+                     data-bs-toggle="offcanvas"
+                     data-bs-target="#menuLateral">
+            </div>
+
+        </div>
+
+        <div class="offcanvas offcanvas-end neon-sidebar" tabindex="-1" id="menuLateral">
+            <div class="offcanvas-header border-bottom border-secondary">
+                <h5 class="offcanvas-title text-uppercase fw-bold" style="color: var(--neon-blue);">
+                    <span sec:authentication="name">NOMBRE</span>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+            </div>
+            <div class="offcanvas-body d-flex flex-column p-4">
+                <div class="d-flex flex-column gap-3">
+                    <a href="/favoritos" class="btn btn-neon-purple-ghost p-3 rounded-3 d-flex align-items-center gap-3">❤️ Favoritos</a>
+                    <a href="/recomendaciones" class="btn btn-neon-purple-ghost p-3 rounded-3 d-flex align-items-center gap-3">✨ Recomendaciones</a>
+                    <a href="/notificaciones" class="btn btn-neon-purple-ghost p-3 rounded-3 d-flex align-items-center gap-3">🔔 Notificaciones</a>
+                    <a sec:authorize="hasAuthority('ADMIN')"
+                       href="/admin"
+                       class="btn btn-neon-red-ghost p-3 rounded-3 d-flex align-items-center gap-3 mt-3">
+                        👮‍♂️ PANEL ADMIN
+                    </a>
+                </div>
+                <div class="mt-auto pt-4 d-flex flex-column gap-3">
+                    <a href="/" class="btn btn-neon-green-ghost w-100 p-3 rounded-3">🏠 Volver al Inicio</a>
+                    <a href="/logout" class="btn btn-neon-red-ghost w-100 p-3 rounded-3">🚪 Cerrar Sesión</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div style="height: 100px;"></div>
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+
+            <div class="p-5 rounded-4 position-relative"
+                 style="background: rgba(20, 20, 30, 0.9); border: 2px solid var(--neon-purple); box-shadow: 0 0 30px rgba(189, 0, 255, 0.15);">
+
+                <h2 class="text-center text-uppercase mb-5" style="color: var(--neon-blue); letter-spacing: 2px;">
+                    Identificación de Usuario
+                </h2>
+
+                <div class="row align-items-center">
+
+                    <div class="col-md-4 text-center mb-4 mb-md-0">
+
+                        <form th:action="@{/actualizar-avatar}" method="post" enctype="multipart/form-data" id="avatarForm">
+
+                            <div class="position-relative d-inline-block">
+                                <img th:src="${usuario.imagenUrl != null ? '/uploads/' + usuario.imagenUrl : 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + usuario.nombre}"
+                                     id="avatarPreview"
+                                     class="rounded-circle img-thumbnail bg-dark border-secondary p-1"
+                                     style="width: 180px; height: 180px; object-fit: cover; box-shadow: 0 0 20px var(--neon-purple);"
+                                     alt="Avatar">
+
+                                <input type="file" name="archivo" id="fileInput" class="d-none" accept="image/*">
+
+                                <button type="button"
+                                        onclick="document.getElementById('fileInput').click();"
+                                        class="btn btn-sm btn-primary position-absolute bottom-0 end-0 rounded-circle"
+                                        style="width: 40px; height: 40px; border: 2px solid white; z-index: 5;">
+                                    📷
+                                </button>
+                            </div>
+
+                            <button type="submit" id="btnGuardarAvatar" class="btn btn-sm btn-success mt-3 d-none">
+                                ✅ Confirmar Cambio
+                            </button>
+
+                            <p class="mt-3 text-muted small">ID: <span th:text="${usuario.id}">001</span></p>
+
+                        </form>
+
+                        <script>
+                            document.getElementById('fileInput').addEventListener('change', function(event) {
+                                const file = event.target.files[0];
+                                if (file) {
+                                    // Crear URL temporal para ver la foto
+                                    const reader = new FileReader();
+                                    reader.onload = function(e) {
+                                        document.getElementById('avatarPreview').src = e.target.result;
+                                        // Mostrar el botón de guardar
+                                        document.getElementById('btnGuardarAvatar').classList.remove('d-none');
+                                    }
+                                    reader.readAsDataURL(file);
+                                }
+                            });
+                        </script>
+                    </div>
+
+                    <div class="col-md-8">
+                        <form>
+                            <div class="mb-3">
+                                <label class="form-label text-secondary text-uppercase small">Nombre de Usuario</label>
+                                <input type="text" class="form-control bg-dark text-light border-secondary" th:value="${usuario.nombre}" readonly>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label text-secondary text-uppercase small">Correo Electrónico</label>
+                                <input type="email" class="form-control bg-dark text-light border-secondary" th:value="${usuario.email}" readonly>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label text-secondary text-uppercase small">Rol del Sistema</label>
+                                <input type="text" class="form-control bg-dark text-warning border-secondary fw-bold" th:value="${usuario.rol}" readonly>
+                            </div>
+
+                            <div class="mt-4">
+                                <button type="button" class="btn btn-neon-blue-outline w-100">
+                                    💾 Guardar Cambios (Próximamente)
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<footer id="contacto" class="mt-auto text-light"
+        style="background-color: rgba(10, 10, 18, 0.95);
+               border-top: 2px solid var(--neon-purple);
+               box-shadow: 0 -4px 15px rgba(189, 0, 255, 0.2);
+               position: relative; z-index: 10;">
+
+    <div class="container py-3">
+        <div class="row align-items-center justify-content-center text-center">
+
+            <div class="col-12 d-flex flex-column flex-md-row justify-content-center align-items-center gap-4">
+
+                <span class="text-uppercase fw-bold me-md-3" style="color: var(--neon-blue); letter-spacing: 2px; font-size: 0.9rem;">
+                    📬 Contáctanos:
+                </span>
+
+                <div class="d-flex align-items-center gap-2 footer-link" title="Instagram">
+                    <img th:src="@{/images/instagram.png}" alt="Instagram"
+                         style="width: 45px; height: 45px; filter: drop-shadow(0 0 5px #C13584);">
+                    <span class="fw-bold text-light d-none d-lg-block">@indieLovers</span>
+                </div>
+
+                <div class="d-flex align-items-center gap-2 footer-link" title="X">
+                    <img th:src="@{/images/x.png}" alt="X"
+                         style="width: 40px; height: 40px; filter: drop-shadow(0 0 5px #ffffff);"> <span class="fw-bold text-light d-none d-lg-block">@indieLovers</span>
+                </div>
+
+                <div class="d-flex align-items-center gap-2 footer-link" title="Correo">
+                    <img th:src="@{/images/gmail.png}" alt="Gmail"
+                         style="width: 45px; height: 45px; filter: drop-shadow(0 0 5px #EA4335);">
+                    <span class="fw-bold text-light d-none d-lg-block">frameworksborisbg@gmail.com</span>
+                </div>
+
+            </div>
+
+            <div class="col-12 mt-3 text-muted" style="font-size: 0.75rem;">
+                &copy; 2026 IndieLovers. Todos los derechos reservados.
+            </div>
+
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>

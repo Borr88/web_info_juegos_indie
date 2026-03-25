@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Editor de Juego - IndieLovers</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+</head>
+<body class="bg-dark text-light d-flex justify-content-center align-items-center min-vh-100">
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+
+            <div class="card bg-dark border-0 shadow-lg" style="border: 1px solid var(--neon-purple);">
+                <div class="card-header bg-transparent border-bottom border-secondary p-4">
+                    <h2 class="text-uppercase m-0" style="color: var(--neon-pink);" th:text="${titulo}">Gestión</h2>
+                </div>
+
+                <div class="card-body p-4">
+                    <form th:action="@{/admin/guardar}" th:object="${videojuego}" method="post" enctype="multipart/form-data">
+
+                        <input type="hidden" th:field="*{id}">
+
+                        <div class="mb-3">
+                            <label class="form-label text-secondary">Título del Juego</label>
+                            <input type="text" th:field="*{titulo}" class="form-control bg-dark text-light border-secondary" required>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label text-secondary">Género</label>
+                                <select th:field="*{genero}" class="form-select bg-dark text-light border-secondary">
+                                    <option value="Metroidvania">Metroidvania</option>
+                                    <option value="RPG">RPG</option>
+                                    <option value="Plataformas">Plataformas</option>
+                                    <option value="Roguelike">Roguelike</option>
+                                    <option value="Simulación">Simulación</option>
+                                    <option value="Acción">Acción</option>
+                                    <option value="Aventura">Aventura</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-secondary">Valoración (0-10)</label>
+                                <input type="number" step="0.1" max="10" th:field="*{valoracionMedia}" class="form-control bg-dark text-light border-secondary">
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label text-secondary">Sinopsis</label>
+                            <textarea th:field="*{sinopsis}" rows="4" class="form-control bg-dark text-light border-secondary"></textarea>
+                        </div>
+
+                        <div class="mb-4 p-3 rounded border border-secondary" style="background: rgba(255,255,255,0.05);">
+                            <label class="form-label text-light mb-2">📸 Portada del Juego</label>
+                            <input type="file" name="archivo" class="form-control bg-dark text-light border-secondary" accept="image/*">
+                            <div class="form-text text-muted">Si lo dejas vacío, se mantendrá la imagen actual.</div>
+                        </div>
+
+                        <div class="mb-4 form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="esNovedad" th:field="*{esNovedad}"
+                                   style="width: 3em; height: 1.5em; cursor: pointer; background-color: #333; border-color: var(--neon-purple);">
+                            <label class="form-check-label ms-3 text-uppercase fw-bold" for="esNovedad" style="color: var(--neon-yellow); padding-top: 5px;">
+                                🚀 ¿Marcar como Novedad / Próximo Lanzamiento?
+                            </label>
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="/admin" class="btn btn-outline-light">Cancelar</a>
+                            <button type="submit" class="btn btn-neon-green-ghost px-4">
+                                💾 Guardar Juego
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

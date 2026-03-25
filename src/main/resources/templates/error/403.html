@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>403 - Acceso Denegado</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+</head>
+<body class="bg-dark text-light d-flex align-items-center justify-content-center min-vh-100"
+      style="background-image: radial-gradient(circle, rgba(30,10,10,1) 0%, rgba(0,0,0,1) 100%);">
+
+<div class="text-center p-5" style="border: 2px solid var(--neon-pink); box-shadow: 0 0 30px var(--neon-pink); border-radius: 20px; max-width: 600px; background: rgba(0,0,0,0.8);">
+
+    <div style="font-size: 6rem; text-shadow: 0 0 20px var(--neon-pink);">🛡️ 403</div>
+
+    <h1 class="text-uppercase fw-bold mb-3" style="color: var(--neon-pink);">Acceso Denegado</h1>
+
+    <p class="lead text-secondary mb-4">
+        ¡Alto ahí, viajero! ✋<br>
+        No tienes suficiente nivel (Permisos de Administrador) para entrar en esta mazmorra.
+    </p>
+
+    <a href="/" class="btn btn-neon-red-ghost px-4 py-2">
+        🔙 Retirada Táctica (Volver)
+    </a>
+</div>
+
+</body>
+</html>
