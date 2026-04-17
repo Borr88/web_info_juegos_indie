@@ -107,13 +107,14 @@ public class DataSeeder implements CommandLineRunner {
             admin.setEmail("admin@indielovers.com");
 
             // IMPORTANTE: La contraseña siempre debe guardarse encriptada
-            admin.setPassword(passwordEncoder.encode("admin123"));
+            // La contraseña cumple la política: 8+ chars, 1 mayúscula, 1 número, 1 carácter especial
+            admin.setPassword(passwordEncoder.encode("admin123!"));
 
             admin.setRol(Rol.ADMIN); // Rol con permisos totales
             admin.setActivo(true);
 
             usuarioRepository.save(admin);
-            System.out.println("👮 Usuario ADMIN creado: (User: Admin / Pass: admin123)");
+            System.out.println("👮 Usuario ADMIN creado: (User: Admin / Pass: admin123!)");
         } else {
             System.out.println("ℹ️ El usuario ADMIN ya existe, no se ha modificado.");
         }

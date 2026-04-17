@@ -55,9 +55,11 @@
                     </td>
                     <td class="text-end pe-3">
                         <a th:href="@{/admin/editar/{id}(id=${juego.id})}" class="btn btn-sm btn-primary me-1">✏️ Editar</a>
-                        <a th:href="@{/admin/borrar/{id}(id=${juego.id})}"
-                           class="btn btn-sm btn-danger"
-                           onclick="return confirm('¿Seguro que quieres borrar este juego? 😱');">🗑️ Borrar</a>
+                        <form th:action="@{/admin/borrar/{id}(id=${juego.id})}" method="post" style="display: inline;"
+                              onsubmit="return confirm('¿Seguro que quieres borrar este juego? 😱');">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                            <button type="submit" class="btn btn-sm btn-danger">🗑️ Borrar</button>
+                        </form>
                     </td>
                 </tr>
                 </tbody>

@@ -3,11 +3,19 @@ package com.borisbaldominos.proyectofinal.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.util.List;
 
+/**
+ * Patron de contraseña segura:
+ * - Al menos 8 caracteres
+ * - Al menos 1 letra mayúscula
+ * - Al menos 1 número
+ * - Al menos 1 carácter especial (!@#$%^&*(),.?":{}|<>)
+ */
 @Entity
 @Data
 public class Usuario {
@@ -16,14 +24,19 @@ public class Usuario {
     private long id;
 
     @NotBlank(message = "El usuario tiene que tener nombre")
-    @Size(min=5,max=30)
+    @Size(min=5, max=30, message = "El nombre debe tener entre 5 y 30 caracteres")
     @Column(unique = true)
     private String nombre;
 
-    @NotBlank
+    @NotBlank(message = "La contraseña es obligatoria")
+    @Pattern(
+        regexp = "^(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*(),.?\":{}|<>]).{8,}$",
+        message = "La contraseña debe tener al menos 8 caracteres, 1 mayúscula, 1 número y 1 carácter especial"
+    )
     private String password;
 
-    @Email(message = "Debe ser email valido")
+    @NotBlank(message = "El email es obligatorio")
+    @Email(message = "Debe ser un email válido")
     private String email;
 
     @Enumerated(EnumType.STRING)

@@ -1,9 +1,11 @@
 package com.borisbaldominos.proyectofinal.config;
 
 import com.borisbaldominos.proyectofinal.service.CustomUserDetailsService;
+import com.borisbaldominos.proyectofinal.config.LoginAttemptFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -11,6 +13,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 /**
  * Clase SecurityConfig
@@ -27,6 +31,9 @@ public class SecurityConfig {
     @Autowired
     private CustomUserDetailsService userDetailsService;
 
+    @Autowired
+    private LoginAttemptFilter loginAttemptFilter;
+
     // ==========================================
     // 1. FILTRO DE SEGURIDAD (LAS REGLAS)
     // ==========================================
@@ -34,8 +41,27 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 // --- A. CONFIGURACIÓN TÉCNICA (Necesario para H2 Console) ---
-                .csrf(csrf -> csrf.disable()) // Desactivamos CSRF para facilitar pruebas y consola H2
-                .headers(headers -> headers.frameOptions(frame -> frame.disable())) // Permite ver H2 en frames
+                // CSRF protegido para POST, PUT, DELETE excepto en H2 console
+                .csrf(csrf -> csrf
+                        .ignoringRequestMatchers("/h2-console/**")
+                        .requireCsrfProtectionMatcher(new AntPathRequestMatcher("/**"))
+                )
+                .headers(headers -> headers
+                        .frameOptions(frame -> frame.disable()) // Permite ver H2 en frames (solo /h2-console/**)
+                        // Security Headers para prevenir XSS y otros ataques
+                        .xssProtection(xss -> {}) // X-XSS-Protection header (habilitado por defecto en Spring Security 6)
+                        .contentSecurityPolicy(csp -> csp.policyDirectives(
+                                "default-src 'self'; " +
+                                "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; " +
+                                "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; " +
+                                "img-src 'self' data: https:; " +
+                                "font-src 'self' https://cdn.jsdelivr.net"
+                        )) // Content-Security-Policy
+                        .referrerPolicy(referrer -> referrer.policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN)) // Referrer-Policy
+                        .permissionsPolicyHeader(permissions -> permissions.policy(
+                                "geolocation=(), microphone=(), camera=()"
+                        )) // Permissions-Policy
+                )
 
                 // --- B. REGLAS DE AUTORIZACIÓN (El Portero) ---
                 .authorizeHttpRequests(auth -> auth
@@ -52,11 +78,11 @@ public class SecurityConfig {
                                 "/guardar-usuario",
                                 "/videojuego/**",   // Ver detalle de un juego
                                 "/categorias/**",   // Ver listado por categorías
-                                "/api/videojuegos/**" // Tu API (si la usas externamente)
+                                "/api/videojuegos/**" // API REST - GET requests son públicos
                         ).permitAll()
 
-                        // 3. CONSOLA DE BASE DE DATOS H2
-                        .requestMatchers("/h2-console/**").permitAll()
+                        // 3. CONSOLA DE BASE DE DATOS H2 (SOLO ADMIN)
+                        .requestMatchers("/h2-console/**").hasAuthority("ADMIN")
 
                         // 4. ZONA DE ADMINISTRACIÓN (¡SOLO ADMIN!) 🛡️
                         .requestMatchers("/admin/**").hasAuthority("ADMIN")
@@ -78,6 +104,9 @@ public class SecurityConfig {
                         .logoutSuccessUrl("/")      // Al salir, volvemos al inicio
                         .permitAll()
                 );
+
+        // Añadir filtro de rate limiting para login
+        http.addFilterBefore(loginAttemptFilter, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

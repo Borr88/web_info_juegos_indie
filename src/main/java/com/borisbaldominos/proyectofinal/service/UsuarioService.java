@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -90,8 +91,132 @@ public class UsuarioService {
     // ==========================================
     // 3. GESTIÓN DE AVATAR (IMAGEN PERFIL)
     // ==========================================
+    private static final List<String> ALLOWED_CONTENT_TYPES = List.of(
+            "image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"
+    );
+
+    private static final List<String> ALLOWED_EXTENSIONS = List.of(
+            ".jpg", ".jpeg", ".png", ".gif", ".webp"
+    );
+
+    private static final long MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB max
+
+    // Magic bytes para validar el contenido real de imágenes
+    private static final byte[] JPEG_MAGIC = {(byte) 0xFF, (byte) 0xD8, (byte) 0xFF};
+    private static final byte[] PNG_MAGIC = {(byte) 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A};
+    private static final byte[] GIF_MAGIC = {0x47, 0x49, 0x46}; // GIF
+    private static final byte[] WEBP_MAGIC = {0x52, 0x49, 0x46, 0x46}; // RIFF header para WebP
+
+    /**
+     * Valida que el archivo sea una imagen válida (tipo, extensión y magic bytes)
+     */
+    private void validarImagen(MultipartFile archivo) {
+        // Validar que no esté vacío
+        if (archivo.isEmpty()) {
+            throw new IllegalArgumentException("El archivo está vacío");
+        }
+
+        // Validar tamaño máximo
+        if (archivo.getSize() > MAX_FILE_SIZE) {
+            throw new IllegalArgumentException("El archivo excede el tamaño máximo permitido (5MB)");
+        }
+
+        // Validar tipo MIME
+        String contentType = archivo.getContentType();
+        if (contentType == null || !ALLOWED_CONTENT_TYPES.contains(contentType.toLowerCase())) {
+            throw new IllegalArgumentException("Solo se permiten imágenes JPG, PNG, GIF o WebP");
+        }
+
+        // Validar extensión del archivo
+        String nombreOriginal = archivo.getOriginalFilename();
+        if (nombreOriginal == null) {
+            throw new IllegalArgumentException("Nombre de archivo inválido");
+        }
+
+        String extension = "";
+        int lastDot = nombreOriginal.lastIndexOf('.');
+        if (lastDot > 0) {
+            extension = nombreOriginal.substring(lastDot).toLowerCase();
+        }
+
+        if (!ALLOWED_EXTENSIONS.contains(extension)) {
+            throw new IllegalArgumentException("Extensión de archivo no permitida: " + extension);
+        }
+
+        // Validar magic bytes (contenido real del archivo)
+        validarMagicBytes(archivo, extension);
+    }
+
+    /**
+     * Valida que los primeros bytes del archivo coincidan con el formato esperado
+     * Esto previene ataques donde un archivo malicioso se hace pasar por imagen
+     */
+    private void validarMagicBytes(MultipartFile archivo, String extension) {
+        try {
+            byte[] header = archivo.getBytes();
+            if (header.length < 4) {
+                throw new IllegalArgumentException("Archivo demasiado pequeño para ser una imagen válida");
+            }
+
+            boolean esValido = switch (extension) {
+                case ".jpg", ".jpeg" -> {
+                    // JPEG: FF D8 FF
+                    yield header.length >= 3 &&
+                            header[0] == JPEG_MAGIC[0] &&
+                            header[1] == JPEG_MAGIC[1] &&
+                            header[2] == JPEG_MAGIC[2];
+                }
+                case ".png" -> {
+                    // PNG: 89 50 4E 47 0D 0A 1A 0A
+                    if (header.length < 8) yield false;
+                    for (int i = 0; i < PNG_MAGIC.length; i++) {
+                        if (header[i] != PNG_MAGIC[i]) yield false;
+                    }
+                    yield true;
+                }
+                case ".gif" -> {
+                    // GIF: 47 49 46 (GIF)
+                    yield header.length >= 3 &&
+                            header[0] == GIF_MAGIC[0] &&
+                            header[1] == GIF_MAGIC[1] &&
+                            header[2] == GIF_MAGIC[2];
+                }
+                case ".webp" -> {
+                    // WebP: RIFF header + WEBP signature
+                    if (header.length < 12) yield false;
+                    // Verificar RIFF header
+                    if (header[0] != WEBP_MAGIC[0] || header[1] != WEBP_MAGIC[1] ||
+                        header[2] != WEBP_MAGIC[2] || header[3] != WEBP_MAGIC[3]) yield false;
+                    // Verificar WEBP signature (bytes 8-11 deben ser 'W','E','B','P')
+                    yield header[8] == 'W' && header[9] == 'E' && header[10] == 'B' && header[11] == 'P';
+                }
+                default -> false;
+            };
+
+            if (!esValido) {
+                throw new IllegalArgumentException("El contenido del archivo no coincide con su extensión. Se requiere una imagen válida.");
+            }
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Error al validar el archivo: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Sanitiza el nombre del archivo para prevenir Path Traversal
+     */
+    private String sanitizarNombreArchivo(String nombreOriginal) {
+        // Extraer solo el nombre del archivo, sin path
+        String nombreSinPath = Paths.get(nombreOriginal).getFileName().toString();
+
+        // Eliminar caracteres especiales y espacios
+        String nombreLimpio = nombreSinPath.replaceAll("[^a-zA-Z0-9._-]", "_");
+
+        return nombreLimpio;
+    }
+
     public void subirAvatar(Long usuarioId, MultipartFile archivo) {
-        if (archivo.isEmpty()) return;
+        // Validar el archivo antes de procesarlo
+        validarImagen(archivo);
 
         try {
             // 1. Preparar ruta de destino
@@ -102,9 +227,9 @@ public class UsuarioService {
                 Files.createDirectories(rutaCarpeta);
             }
 
-            // 2. Generar nombre único para evitar colisiones (Sobrescribir fotos de otros)
-            // Ejemplo: usuario_5_avatar.jpg
-            String nombreArchivo = "usuario_" + usuarioId + "_" + archivo.getOriginalFilename();
+            // 2. Sanitizar nombre y generar nombre único
+            String nombreOriginalSanitizado = sanitizarNombreArchivo(archivo.getOriginalFilename());
+            String nombreArchivo = "usuario_" + usuarioId + "_" + nombreOriginalSanitizado;
 
             // 3. Guardar archivo físico
             Path rutaCompleta = rutaCarpeta.resolve(nombreArchivo);

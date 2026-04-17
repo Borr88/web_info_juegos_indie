@@ -45,8 +45,13 @@ public class GlobalControllerAdvice {
     // Caso B: Capturador Genérico (Cualquier otro error inesperado)
     @ExceptionHandler(Exception.class)
     public String handleGeneralException(Exception ex, Model model) {
+        // Loggear el error completo en consola/servidor para debugging
         System.err.println("❌ Error capturado por Advice: " + ex.getMessage());
-        model.addAttribute("message", "Ha ocurrido un error inesperado: " + ex.getMessage());
+        ex.printStackTrace();
+
+        // NO exponer el mensaje completo al usuario - podria revelar informacion sensible
+        // Solo mostramos un mensaje generico
+        model.addAttribute("message", "Ha ocurrido un error inesperado. Por favor, inténtalo de nuevo más tarde.");
         return "error/500";
     }
 

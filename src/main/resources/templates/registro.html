@@ -69,7 +69,10 @@
 
             <div class="mb-3">
                 <label class="form-label text-light">Contraseña</label>
-                <input type="password" th:field="*{password}" class="form-control bg-dark text-light border-secondary" placeholder="******" required>
+                <input type="password" th:field="*{password}" class="form-control bg-dark text-light border-secondary" placeholder="Mínimo 8 caracteres, 1 mayúscula y 1 número" required minlength="8">
+                <div class="form-text text-muted small">
+                    Requisitos: 8+ caracteres, al menos 1 mayúscula (A-Z) y 1 número (0-9)
+                </div>
             </div>
 
             <div class="d-grid gap-2 mt-4">
