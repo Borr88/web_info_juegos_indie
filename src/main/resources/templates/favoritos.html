@@ -76,9 +76,9 @@
                         🏠 Volver al Inicio
                     </a>
 
-                    <a href="/logout" class="btn btn-neon-red-ghost w-100 d-flex justify-content-center align-items-center p-3 rounded-3">
-                        🚪 Cerrar Sesión
-                    </a>
+                    <form th:action="@{/logout}" method="post" class="d-inline w-100">
+                        <button type="submit" class="btn btn-neon-red-ghost w-100 ...">🚪 Cerrar Sesión</button>
+                    </form>
 
                 </div>
 
