@@ -75,9 +75,9 @@
                 </div>
 
                 <div sec:authorize="isAuthenticated()" class="mt-auto pt-4">
-                    <a href="/logout" class="btn btn-neon-red-ghost d-flex justify-content-center align-items-center p-3 rounded-3 w-100">
-                        🚪 Cerrar Sesión
-                    </a>
+                    <form th:action="@{/logout}" method="post" class="d-inline w-100">
+                        <button type="submit" class="btn btn-neon-red-ghost w-100 ...">🚪 Cerrar Sesión</button>
+                    </form>
                 </div>
 
             </div>
