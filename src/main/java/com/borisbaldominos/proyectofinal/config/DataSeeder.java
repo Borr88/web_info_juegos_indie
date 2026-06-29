@@ -81,7 +81,7 @@ public class DataSeeder implements CommandLineRunner {
                 "Hollow Knight: Silksong",
                 "Juega como Hornet, la princesa protectora de Hallownest...",
                 0.0, // Nota 0 porque no ha salido
-                "https://assets.nintendo.com/image/upload/ar_16:9,c_lpad,w_1240/b_white/f_auto/q_auto/ncom/software/switch/70010000019687/849319d675685a065b9b9426f49dc17855074217122180590a3c20c025555c91",
+                "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1030300/header.jpg",",
                 "Metroidvania",
                 true // Es novedad
         );
@@ -90,7 +90,7 @@ public class DataSeeder implements CommandLineRunner {
                 "Hades II",
                 "Lucha más allá del Inframundo empleando hechicería oscura...",
                 0.0,
-                "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1030300/header.jpg",
+                "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1145350/header.jpg",",
                 "Roguelike",
                 true // Es novedad
         );
