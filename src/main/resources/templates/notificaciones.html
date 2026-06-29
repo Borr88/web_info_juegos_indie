@@ -45,7 +45,9 @@
                     <a sec:authorize="hasAuthority('ADMIN')" href="/admin" class="btn btn-neon-red-ghost p-3 rounded-3 d-flex align-items-center gap-3 mt-2">👮‍♂️ PANEL ADMIN</a>
                 </div>
                 <div sec:authorize="isAuthenticated()" class="mt-auto pt-4">
-                    <a href="/logout" class="btn btn-neon-red-ghost w-100">🚪 Cerrar Sesión</a>
+                    <form th:action="@{/logout}" method="post" class="d-inline w-100">
+                        <button type="submit" class="btn btn-neon-red-ghost w-100 ...">🚪 Cerrar Sesión</button>
+                    </form>
                 </div>
             </div>
         </div>
