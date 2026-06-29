@@ -44,7 +44,6 @@ public class SecurityConfig {
                 // CSRF protegido para POST, PUT, DELETE excepto en H2 console
                 .csrf(csrf -> csrf
                         .ignoringRequestMatchers("/h2-console/**")
-                        .requireCsrfProtectionMatcher(new AntPathRequestMatcher("/**"))
                 )
                 .headers(headers -> headers
                         .frameOptions(frame -> frame.disable()) // Permite ver H2 en frames (solo /h2-console/**)
