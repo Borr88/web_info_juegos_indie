@@ -53,7 +53,7 @@ public class DataSeeder implements CommandLineRunner {
                 "Hollow Knight",
                 "Un caballero sin nombre desafía las profundidades de Hallownest...",
                 9.8,
-                "https://image.api.playstation.com/vulcan/img/rnd/202010/3017/MPluk22e03Zt7sZkC8F6tZjV.png",
+                "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/367520/header.jpg",
                 "Metroidvania",
                 false
         );
@@ -62,7 +62,7 @@ public class DataSeeder implements CommandLineRunner {
                 "Stardew Valley",
                 "Heredas la vieja granja de tu abuelo...",
                 9.5,
-                "https://image.api.playstation.com/vulcan/img/rnd/202010/1614/37402f0e-7440-4e3a-8646-633852033626.png",
+                "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/413150/header.jpg",
                 "Simulación",
                 false
         );
@@ -71,7 +71,7 @@ public class DataSeeder implements CommandLineRunner {
                 "Celeste",
                 "Ayuda a Madeline a sobrevivir a sus demonios internos...",
                 9.7,
-                "https://image.api.playstation.com/vulcan/img/rnd/202010/2119/b41c0985-7848-4796-9817-640103761741.png",
+                "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/504230/header.jpg",
                 "Plataformas",
                 false
         );
@@ -90,7 +90,7 @@ public class DataSeeder implements CommandLineRunner {
                 "Hades II",
                 "Lucha más allá del Inframundo empleando hechicería oscura...",
                 0.0,
-                "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1145350/header.jpg",
+                "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1030300/header.jpg",
                 "Roguelike",
                 true // Es novedad
         );
